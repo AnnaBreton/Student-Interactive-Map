@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<!--<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.js"></script> -->
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<!--<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>-->
+
+<!-- I recommend you host this file on your own, since this will change without warning !!!-->
+<!-- this is where we get the map from -->
+<script src="http://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
+<h style = "font-size: 100%; color: #8b4513; font-family: Arial " > SLU International Students</h>
+<p style = "font-size: 25%; color: #8b4513; font-family: Arial"><a href="http://datamaps.github.io/">DataMaps Project Homepage</a></p>
+<!-- width changes how big the map is on the screen, max heght changes the size of the container!!!-->
+<!--<div id="container1" style="position: relative; width: 80%; max-height: 800px;"></div>-->
+<div id="container1" style="position: relative; width: 80%; max-height: 800px;"></div>
+<script>
+    //basic map configuration with custom fills, mercator projection
+    function drawmap(sz) {
+        var map = new Datamap({
+            scope: 'world',
+            element: document.getElementById('container1'),
+            projection: 'mercator',
+            height: sz,
+            fills: {
+                defaultFill: '#c8c8c8',
+                lt50: 'rgba(225,26,0,0.9)',
+                gt50: 'rgba(102,51,0,0.9)'
+            },
+            // three letter country code for specific nations
+            data: {
+                USA: {fillKey: 'lt50', country: "USA", population: 300000000},
+
+                ARM: {fillKey: 'gt50'},
+                AUS: {fillKey: 'gt50'},
+                BHS: {fillKey: 'gt50'},
+                BGD: {fillKey: 'gt50'},
+                BLR: {fillKey: 'gt50'},
+                BMU: {fillKey: 'gt50'},
+                BIH: {fillKey: 'gt50'},
+                BWA: {fillKey: 'gt50'},
+                BRA: {fillKey: 'gt50'},
+                BDI: {fillKey: 'gt50'},
+                CAN: {fillKey: 'gt50'},
+                CYM: {fillKey: 'gt50'},
+                CHL: {fillKey: 'gt50'},
+                CHN: {fillKey: 'gt50'},
+                COL: {fillKey: 'gt50'},
+                CRI: {fillKey: 'gt50'},
+                HRV: {fillKey: 'gt50'},
+                DNK: {fillKey: 'gt50'},
+                EGY: {fillKey: 'gt50'},
+                SLV: {fillKey: 'gt50'},
+                FIN: {fillKey: 'gt50'},
+                DEU: {fillKey: 'gt50'},
+                GHA: {fillKey: 'gt50'},
+                GRC: {fillKey: 'gt50'},
+                HUN: {fillKey: 'gt50'},
+                IND: {fillKey: 'gt50'},
+                IRN: {fillKey: 'gt50'},
+                ITA: {fillKey: 'gt50'},
+                JAM: {fillKey: 'gt50'},
+                JPN: {fillKey: 'gt50'},
+                KEN: {fillKey: 'gt50'},
+                KOR: {fillKey: 'gt50'},
+                LVA: {fillKey: 'gt50'},
+                LSO: {fillKey: 'gt50'},
+                MDG: {fillKey: 'gt50'},
+                MAR: {fillKey: 'gt50'},
+                MOZ: {fillKey: 'gt50'},
+                NLD: {fillKey: 'gt50'},
+                NZL: {fillKey: 'gt50'},
+                NIC: {fillKey: 'gt50'},
+                NGA: {fillKey: 'gt50'},
+                PAK: {fillKey: 'gt50'},
+                PSE: {fillKey: 'gt50'},
+                PHL: {fillKey: 'gt50'},
+                POL: {fillKey: 'gt50'},
+                RUS: {fillKey: 'gt50'},
+                SGP: {fillKey: 'gt50'},
+                SVK: {fillKey: 'gt50'},
+                ESP: {fillKey: 'gt50'},
+                LKA: {fillKey: 'gt50'},
+                SWZ: {fillKey: 'gt50'},
+                SWE: {fillKey: 'gt50'},
+                TZA: {fillKey: 'gt50'},
+                TLS: {fillKey: 'gt50'},
+                TUR: {fillKey: 'gt50'},
+                UGA: {fillKey: 'gt50'},
+                UKR: {fillKey: 'gt50'},
+                GBR: {fillKey: 'gt50'},
+                URY: {fillKey: 'gt50'},
+                VNM: {fillKey: 'gt50'},
+                ZMB: {fillKey: 'gt50'},
+                ZWE: {fillKey: 'gt50'}
+
+            },
+            //opens up new US map when you click anywhere. Make is specific to clicking US
+
+            done: function(datamap) {
+                console.log("in done function")
+                datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+                datamap.svg.call(d3.behavior.drag().on("drag", redraw2));
+
+                // D3 svg click event: click event specific to country
+                datamap.svg.selectAll('.datamaps-subunit').on('click', function(geo) {
+                    console.log("geography click event")
+                    //gets specific country id ( three letter code) for where mouse clicked
+                    var localData = map.options.data[geo.id]
+                    //makes sure you click a country
+                    if (localData && localData.country) {
+                        //when you click the US, open a new window with US map
+                        window.open("http://localhost:63342/untitled1/USMap1.html?_ijt=90svjlk978nrpj7379m5du32iq");
+                        // this alter is an example of using specific object data
+                        alert(localData.country +" " + localData.fillKey + " "+ localData.population)
+                    }
+                });
+
+                function redraw() {
+                    datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                    console.log(d3.event.translate);
+                    console.log("mouse at");
+                    console.log(d3.mouse(container1));
+
+                }
+                function redraw2(){
+                    console.log("drag event");
+                }
+            }
+
+        })
+        d3.selectAll(container1).on("keydown", function() { console.log("keydown")});
+        //connecting arcs starting in Canton(origin), ending in center of selected country, use excel JSON
+        map.arc([
+
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Armenia*/ latitude:40,longitude:45}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Australia*/ latitude:-25,longitude:133}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Bahamas*/ latitude:25,longitude:77}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Bangladesh*/ latitude:24,longitude:90}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Bermuda*/ latitude:32.2,longitude:-64.45}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Bosnia Herzogovina*/ latitude:44,longitude:18}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Botswana*/ latitude:-22,longitude:24}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Brazil*/ latitude:-10,longitude:-55}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Burundi*/ latitude:-3.3,longitude:30}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Canada*/ latitude:60,longitude:-95}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Cayman Islands*/ latitude:19.3,longitude:-80.3}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*CHILE*/ latitude:-30,longitude:-71}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*China*/ latitude:35,longitude:105}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Colombia*/ latitude:4,longitude:-72}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Costa Rica*/ latitude:10,longitude:-84}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Denmark*/ latitude:56,longitude:10}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Egypt*/ latitude:27,longitude:30}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Finland*/ latitude:64,longitude:26}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Germany*/ latitude:51,longitude:9}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Ghana*/ latitude:8,longitude:-2}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Greece*/ latitude:39,longitude:22}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Hungary*/ latitude:47,longitude:20}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*India*/ latitude:20,longitude:77}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*IRAN and CANADA*/ latitude:32,longitude:53}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Ireland*/ latitude:53,longitude:-8}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Italy*/ latitude:42.5,longitude:12.5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Jamaica*/ latitude:18.15,longitude:-77.3}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Japan*/ latitude:36,longitude:138}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Kenya*/ latitude:1,longitude:38}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Korea*/ latitude:36,longitude:127.7}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Latvia*/ latitude:57,longitude:25}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Lebanon*/ latitude:33.5,longitude:35.5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Lesotho*/ latitude:-29.3,longitude:28.3}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Madagascar*/ latitude:-20,longitude:47}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Morocco*/ latitude:32,longitude:-5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Mozambique*/ latitude:-18.15,longitude:35}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Nambia*/ latitude:-22,longitude:17}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Netherlands*/ latitude:52.3,longitude:5.45}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*New Zealand*/ latitude:-41,longitude:174}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Nicaragua*/ latitude:13,longitude:-85}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Nigeria*/ latitude:10,longitude:8}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Pakistan*/ latitude:30,longitude:70}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Palestine*/ latitude:32,longitude:35}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Philippines*/ latitude:13,longitude:122}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Russia*/ latitude:60,longitude:100}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Rwanda*/ latitude:-2,longitude:30}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Slovakia*/ latitude:48.4,longitude:19.3}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Spain*/ latitude:40,longitude:-4}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Sri Lanka*/ latitude:7,longitude:81}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Swaziland*/ latitude:-26.3,longitude:31.3}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Sweden/UK*/ latitude:62,longitude:15}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Tanzania*/ latitude:-6,longitude:35}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Timor-Leste*/ latitude:-8.8,longitude:125.7}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Turkey*/ latitude:39,longitude:35}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Uganda*/ latitude:1,longitude:32}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*UK*/ latitude:54,longitude:-2}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Uruguay*/ latitude:-33,longitude:56}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Vietnam*/ latitude:16.1,longitude:107.5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Zambia*/ latitude:-15,longitude:30}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*Zimbabwe*/ latitude:-20,longitude:30}}
+
+
+            ], {strokeWidth: .25, strokeColor: '#000000', animationSpeed: 6000},
+
+            //bubbles, custom popup on hover template. Use excel JSON
+            map.bubbles([
+
+                {name: '1', latitude: -25.32, longitude: 120.32, radius: 5, fillKey: 'lt50'},
+                {name: 'Armenia: 2', latitude: 40, longitude: 45, radius: 2, fillkey: 'lt50'},
+                {name: 'Australia: 1', latitude: -27, longitude: -133, radius: 1, fillkey: 'lt50'},
+                {name: 'Bahamas: 1', latitude: 25, longitude: 77, radius: 1, fillkey: 'lt50'},
+                {name: 'Bangladesh: 1', latitude: 24, longitude: 90, radius: 1, fillkey: 'lt50'},
+                {name: 'Bermuda: 1', latitude: 32.2, longitude: -64.45, radius: 1, fillkey: 'lt50'},
+                {name: 'Bosnia Herzogovina: 4', latitude: 44, longitude: 18, radius: 4, fillkey: 'lt50'},
+                {name: 'Botswana: 2', latitude: -22, longitude: 24, radius: 2, fillkey: 'lt50'},
+                {name: 'Brazil: 1', latitude: -10, longitude: -55, radius: 1, fillkey: 'lt50'},
+                {name: 'Burundi: 1', latitude: -3.3, longitude: 30, radius: 1, fillkey: 'lt50'},
+                {name: 'Canada: 39', latitude: 60, longitude: -95, radius: 39, fillkey: 'lt50'},
+                {name: 'Cayman Islands: 1', latitude: 19.3, longitude: -80.3, radius: 1, fillkey: 'lt50'},
+                {name: 'CHILE: 1', latitude: -30, longitude: -71, radius: 1, fillkey: 'lt50'},
+                {name: 'China: 48', latitude: 35, longitude: 105, radius: 48, fillkey: 'lt50'},
+                {name: 'Colombia: 1', latitude: 4, longitude: -72, radius: 1, fillkey: 'lt50'},
+                {name: 'Costa Rica: 1', latitude: 10, longitude: -84, radius: 1, fillkey: 'lt50'},
+                {name: 'Denmark: 1', latitude: 56, longitude: 10, radius: 1, fillkey: 'lt50'},
+                {name: 'Egypt: 7', latitude: 27, longitude: 30, radius: 7, fillkey: 'lt50'},
+                {name: 'Finland: 2', latitude: 64, longitude: 26, radius: 2, fillkey: 'lt50'},
+                {name: 'Germany: 3', latitude: 51, longitude: 9, radius: 3, fillkey: 'lt50'},
+                {name: 'Ghana: 1', latitude: 8, longitude: -2, radius: 1, fillkey: 'lt50'},
+                {name: 'Greece: 4', latitude: 39, longitude: 22, radius: 4, fillkey: 'lt50'},
+                {name: 'Hungary: 1', latitude: 47, longitude: 20, radius: 1, fillkey: 'lt50'},
+                {name: 'India: 7', latitude: 20, longitude: 77, radius: 7, fillkey: 'lt50'},
+                {name: 'IRAN and CANADA: 1', latitude: 32, longitude: 53, radius: 1, fillkey: 'lt50'},
+                {name: 'Ireland: 1', latitude: 53, longitude: -8, radius: 1, fillkey: 'lt50'},
+                {name: 'Italy: 1', latitude: 42.5, longitude: 12.5, radius: 1, fillkey: 'lt50'},
+                {name: 'Jamaica: 1', latitude: 18.15, longitude: -77.3, radius: 1, fillkey: 'lt50'},
+                {name: 'Japan: 1', latitude: 36, longitude: 138, radius: 1, fillkey: 'lt50'},
+                {name: 'Kenya: 8', latitude: 1, longitude: 38, radius: 8, fillkey: 'lt50'},
+                {name: 'Korea: 10', latitude: 36, longitude: 127.7, radius: 10, fillkey: 'lt50'},
+                {name: 'Latvia: 1', latitude: 57, longitude: 25, radius: 1, fillkey: 'lt50'},
+                {name: 'Lebanon: 1', latitude: 33.5, longitude: 35.5, radius: 1, fillkey: 'lt50'},
+                {name: 'Lesotho: 1', latitude: -29.3, longitude: 28.3, radius: 1, fillkey: 'lt50'},
+                {name: 'Madagascar: 1', latitude: -20, longitude: 47, radius: 1, fillkey: 'lt50'},
+                {name: 'Morocco: 1', latitude: 32, longitude: -5, radius: 1, fillkey: 'lt50'},
+                {name: 'Mozambique: 1', latitude: -18.15, longitude: 35, radius: 1, fillkey: 'lt50'},
+                {name: 'Nambia: 1', latitude: -22, longitude: 17, radius: 1, fillkey: 'lt50'},
+                {name: 'Netherlands: 3', latitude: 52.3, longitude: 5.45, radius: 3, fillkey: 'lt50'},
+                {name: 'New Zealand: 1', latitude: -41, longitude: 174, radius: 1, fillkey: 'lt50'},
+                {name: 'Nicaragua: 1', latitude: 13, longitude: -85, radius: 1, fillkey: 'lt50'},
+                {name: 'Nigeria: 3', latitude: 10, longitude: 8, radius: 3, fillkey: 'lt50'},
+                {name: 'Pakistan: 4', latitude: 30, longitude: 70, radius: 4, fillkey: 'lt50'},
+                {name: 'Palestine: 1', latitude: 32, longitude: 35, radius: 1, fillkey: 'lt50'},
+                {name: 'Philippines: 1', latitude: 13, longitude: 122, radius: 1, fillkey: 'lt50'},
+                {name: 'Russia: 1', latitude: 60, longitude: 100, radius: 1, fillkey: 'lt50'},
+                {name: 'Rwanda: 1', latitude: -2, longitude: 30, radius: 1, fillkey: 'lt50'},
+                {name: 'Slovakia: 1', latitude: 48.4, longitude: 19.3, radius: 1, fillkey: 'lt50'},
+                {name: 'Spain: 4', latitude: 40, longitude: -4, radius: 4, fillkey: 'lt50'},
+                {name: 'Sri Lanka: 1', latitude: 7, longitude: 81, radius: 1, fillkey: 'lt50'},
+                {name: 'Swaziland: 2', latitude: -26.3, longitude: 31.3, radius: 2, fillkey: 'lt50'},
+                {name: 'Sweden/UK: 1', latitude: 62, longitude: 15, radius: 1, fillkey: 'lt50'},
+                {name: 'Tanzania: 1', latitude: -6, longitude: 35, radius: 1, fillkey: 'lt50'},
+                {name: 'Timor-Leste: 1', latitude: -8.8, longitude: 125.7, radius: 1, fillkey: 'lt50'},
+                {name: 'Turkey: 1', latitude: 39, longitude: 35, radius: 1, fillkey: 'lt50'},
+                {name: 'Uganda: 2', latitude: 1, longitude: 32, radius: 2, fillkey: 'lt50'},
+                {name: 'UK: 3', latitude: 54, longitude: -2, radius: 3, fillkey: 'lt50'},
+                {name: 'Uruguay: 1', latitude: -33, longitude: -56, radius: 1, fillkey: 'lt50'},
+                {name: 'Vietnam: 2', latitude: 16.1, longitude: 107.5, radius: 2, fillkey: 'lt50'},
+                {name: 'Zambia: 1', latitude: -15, longitude: 30, radius: 1, fillkey: 'lt50'},
+                {name: 'Zimbabwe: 1', latitude: -20, longitude: 30, radius: 1, fillkey: 'lt50'},
+
+
+
+            ], {
+                //add students text so when you hover over bubble it shows Student(s): and then value
+                popupTemplate: function (geo, data) {
+                    return "<div class='hoverinfo'>Student(s): " + data.name + "</div>";
+                }
+            }))
+    }
+    drawmap(700);
+
+</script>
+<script>
+function zoomin(datamap){
+console.log("zoom in");
+//map.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
+    redraw2();
+}
+function redraw2() {
+    datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    console.log(d3.event.translate);
+    console.log("mouse at");
+    console.log(d3.mouse(container1));
+}
+
+function zoomout(){
+    console.log("zoom out");
+var myImg = document.getElementById("container1");
+myImg.sgv.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
+}
+</script>
+<button onclick="zoomin()"> Zoom In</button>
+<button onclick="zoomout()"> Zoom Out</button>
+
+</body>
+</html>
+
+
+</body>
+
+
+//put click event in a container over the us so when you click it, it only opens the us map then
+<!--
+<div id="container">
+    <p>Some text</p>
+    <div id="overlay" style="position: absolute; top: 0;
+                             left: 0; width: 100%; height:100%">
+        <script>
+            //put code here
+        </script>
+
+    </div>
+</div>
+--!>
