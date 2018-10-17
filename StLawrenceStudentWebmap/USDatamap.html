@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+
+<!-- Before going live change this to local file, since it could change without warning !!!-->
+<!-- this is where we get the map from -->
+
+<script src="http://datamaps.github.io/scripts/datamaps.usa.min.js?v=1"></script>
+<!--<script src="CutStates.json"></script>-->
+<h style = "font-size: 100%; color: #8b4513; font-family: Arial " > SLU Students from the US</h>
+<p style = "font-size: 25%; color: #8b4513; font-family: Arial"><a href="http://datamaps.github.io/">DataMaps Project Homepage</a></p>
+<p style = "font-size: 75%; color: #8b4513; font-family: Arial"> Use scroll wheel to zoom and mouse to drag. Click on northeast US to open a new map</p>
+<!-- width changes how big the map is on the screen, max height changes the size of the container!!!-->
+<!-- below Position: relative fixed bug in program where map flickers when you hover or zoom -->
+<div id="container1" style="position: relative; width: 80%; max-height: 800px;"></div>
+<script>
+    //basic map configuration with custom fills, mercator projection
+    function drawmap(sz) {
+        var USmap = new Datamap({
+            scope: 'usa',
+            element: document.getElementById('container1'),
+            projection: 'mercator',
+            height: sz,
+            fills: {
+                defaultFill: '#bcbcbc',
+                lt50: 'rgba(225,26,0,0.9)',
+                gt50: 'rgba(102,51,0,0.9)',
+                bubbleColor:'red'
+            },
+            // three letter state code for specific states
+            data: {
+                NY: {fillKey: 'lt50', state: "NY"},
+                AE: {fillKey: 'gt50'},
+                AK: {fillKey: 'gt50'},
+                AZ: {fillKey: 'gt50'},
+                CA: {fillKey: 'gt50'},
+                CO: {fillKey: 'gt50'},
+                CT: {fillKey: 'gt50', state:"CT"},
+                DC: {fillKey: 'gt50'},
+                DE: {fillKey: 'gt50'},
+                FL: {fillKey: 'gt50'},
+                GA: {fillKey: 'gt50'},
+                HI: {fillKey: 'gt50'},
+                IA: {fillKey: 'gt50'},
+                ID: {fillKey: 'gt50'},
+                IL: {fillKey: 'gt50'},
+                IN: {fillKey: 'gt50'},
+                MA: {fillKey: 'gt50', state:"MA"},
+                MD: {fillKey: 'gt50'},
+                ME: {fillKey: 'gt50', state: "ME"},
+                MI: {fillKey: 'gt50'},
+                MN: {fillKey: 'gt50'},
+                MO: {fillKey: 'gt50'},
+                MT: {fillKey: 'gt50'},
+                NC: {fillKey: 'gt50'},
+                ND: {fillKey: 'gt50'},
+                NH: {fillKey: 'gt50', state: "NH"},
+                NJ: {fillKey: 'gt50', state: "NJ"},
+                NM: {fillKey: 'gt50'},
+                NV: {fillKey: 'gt50'},
+                OH: {fillKey: 'gt50'},
+                OR: {fillKey: 'gt50'},
+                PA: {fillKey: 'gt50'},
+                PR: {fillKey: 'gt50'},
+                RI: {fillKey: 'gt50', state: "RI"},
+                SC: {fillKey: 'gt50'},
+                SD: {fillKey: 'gt50'},
+                TN: {fillKey: 'gt50'},
+                TX: {fillKey: 'gt50'},
+                UT: {fillKey: 'gt50'},
+                VA: {fillKey: 'gt50'},
+                VT: {fillKey: 'gt50', state: "VT"},
+                WA: {fillKey: 'gt50'},
+                WI: {fillKey: 'gt50'},
+                WY: {fillKey: 'gt50'},
+
+
+            },
+
+            //done function is where you declare all events  you want to capture
+            done: function(datamap) {
+                console.log("in done function")
+                //zoom event
+                datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+                //drag event
+                datamap.svg.call(d3.behavior.drag().on("drag", redraw2));
+                // D3 svg click event: click event specific to state
+                //SVG is for vector graphics
+                datamap.svg.selectAll('.datamaps-subunit').on('click', function(geo) {
+                    console.log("geography click event")
+                    //gets specific state id ( three letter code) for where mouse clicked
+                    var localData = USmap.options.data[geo.id]
+                    //makes sure you click a state
+                    if (localData && localData.state) {
+                        window.open("us-states(1).html",'_self');
+                        // this alter is an example of using specific object data
+                        //alert(localData.state +" " + localData.fillKey )
+                    }
+                });
+
+                function redraw() {
+                    datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                    console.log(d3.event.translate);
+                    console.log("mouse at");
+                    console.log(d3.mouse(container1));
+
+                }
+                function redraw2(){
+                    console.log("drag event");
+                }
+            }
+        })
+        d3.selectAll(container1).on("keydown", function() { console.log("keydown")});
+        //connecting arcs starting in Canton(origin), ending in center of selected state, use excel JSON
+        USmap.arc([
+                {origin:{latitude:45, longitude:-75}, destination:{ /*AK*/ latitude:64.2,longitude:-149.5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*AZ*/ latitude:34,longitude:-111}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*CA*/ latitude:36.7,longitude:-119.4}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*CO*/ latitude:39.5,longitude:-105.8}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*CT*/ latitude:41.6,longitude:-73.1}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*DC*/ latitude:38.9,longitude:-77}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*DE*/ latitude:38.9,longitude:-75.5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*FL*/ latitude:27.6,longitude:-81.5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*GA*/ latitude:32.2,longitude:-82.9}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*HI*/ latitude:19.9,longitude:-155.6}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*IA*/ latitude:41.9,longitude:-93.1}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*ID*/ latitude:44.1,longitude:-114.7}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*IL*/ latitude:40.6,longitude:-89.4}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*IN*/ latitude:40.3,longitude:-86.1}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*MA*/ latitude:42.1,longitude:-71.4}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*MD*/ latitude:39,longitude:-76.6}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*ME*/ latitude:45.3,longitude:-69.4}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*MI*/ latitude:44.3,longitude:-85.6}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*MN*/ latitude:46.7,longitude:-94.7}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*MO*/ latitude:37.96,longitude:-91.8}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*MT*/ latitude:46.9,longitude:-110.4}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*NC*/ latitude:35.8,longitude:-79}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*ND*/ latitude:47.6,longitude:-101}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*NH*/ latitude:43.2,longitude:-71.6}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*NJ*/ latitude:40.1,longitude:-74.4}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*NM*/ latitude:34.5,longitude:-105.9}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*NV*/ latitude:38.8,longitude:-116.4}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*NY*/ latitude:40.7,longitude:-74}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*OH*/ latitude:40.4,longitude:-82.9}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*OR*/ latitude:43.8,longitude:-120.5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*PA*/ latitude:41.2,longitude:-77.2}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*RI*/ latitude:41.6,longitude:-71.5}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*SC*/ latitude:33.8,longitude:-81.2}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*SD*/ latitude:44,longitude:-100}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*TN*/ latitude:35.5,longitude:-86.6}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*TX*/ latitude:32,longitude:-100}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*UT*/ latitude:39.3,longitude:-111}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*VA*/ latitude:37.4,longitude:-78.7}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*VT*/ latitude:44.6,longitude:-72.6}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*WA*/ latitude:47.7,longitude:-120.7}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*WI*/ latitude:43.8,longitude:-88.8}},
+                {origin:{latitude:45, longitude:-75}, destination:{ /*WY*/ latitude:43,longitude:-107.3}}
+
+
+            ], {strokeWidth: .5, strokeColor: '#000000', animationSpeed: 6000},
+
+            //bubbles, custom popup on hover template. Use excel JSON
+            USmap.bubbles([
+
+                //{name: '1', latitude: -25.32, longitude: 120.32, radius: 5, fillKey: 'bubbleColor'},
+
+                {name: 'AK',students: '3', latitude: 64.2, longitude: -149.5, radius: 3, fillKey: 'bubbleColor'},
+                {name: 'AZ', students: '6', latitude: 34, longitude: -111, radius: 3, fillKey: 'bubbleColor'},
+                {name: 'CA', students: '29', latitude: 36.7, longitude: -119.4, radius: 5, fillKey: 'bubbleColor'},
+                {name: 'CO', students: '10', latitude: 39.5, longitude: -105.8, radius: 4, fillKey: 'bubbleColor'},
+                {name: 'CT', students: '214', latitude: 41.6, longitude: -73.1, radius: 10, fillKey: 'bubbleColor'},
+                {name: 'DC', students: '3', latitude: 38.9, longitude: -77, radius: 2, fillKey: 'bubbleColor'},
+                {name: 'DE', students: '5', latitude: 38.9, longitude: -75.5, radius: 3, fillKey: 'bubbleColor'},
+                {name: 'FL', students: '11', latitude: 27.6, longitude: -81.5, radius: 4, fillKey: 'bubbleColor'},
+                {name: 'GA', students: '4', latitude: 32.2, longitude: -82.9, radius: 2, fillKey: 'bubbleColor'},
+                {name: 'HI', students: '1', latitude: 19.9, longitude: -155.6, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'IA', students: '1', latitude: 41.9, longitude: -93.1, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'ID', students: '5', latitude: 44.1, longitude: -114.7, radius: 3, fillKey: 'bubbleColor'},
+                {name: 'IL', students: '18', latitude: 40.6, longitude: -89.4, radius: 5, fillKey: 'bubbleColor'},
+                {name: 'IN', students: '1', latitude: 40.3, longitude: -86.1, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'MA', students: '304', latitude: 42.1, longitude: -71.4, radius: 10, fillKey: 'bubbleColor'},
+                {name: 'MD', students: '15', latitude: 39, longitude: -76.6, radius: 4, fillKey: 'bubbleColor'},
+                {name: 'ME', students: '100', latitude: 45.3, longitude: -69.4, radius: 7, fillKey: 'bubbleColor'},
+                {name: 'MI', students: '13', latitude: 44.3, longitude: -85.6, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'MN', students: '16', latitude: 46.7, longitude: -94.7, radius:4, fillKey: 'bubbleColor'},
+                {name: 'MO', students: '9', latitude: 37.96, longitude: -91.8, radius: 4, fillKey: 'bubbleColor'},
+                {name: 'MT', students: '6', latitude: 46.9, longitude: -110.4, radius: 3, fillKey: 'bubbleColor'},
+                {name: 'NC', students: '7', latitude: 35.8, longitude: -79, radius: 3, fillKey: 'bubbleColor'},
+                {name: 'ND', students: '1', latitude: 47.6, longitude: -101, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'NH', students: '134', latitude: 43.2, longitude: -71.6, radius: 9, fillKey: 'bubbleColor'},
+                {name: 'NJ', students: '79', latitude: 40.1, longitude: -74.4, radius: 7, fillKey: 'bubbleColor'},
+                {name: 'NM', students: '2', latitude: 34.5, longitude: -105.9, radius: 2, fillKey: 'bubbleColor'},
+                {name: 'NV', students: '1', latitude: 38.8, longitude: -116.4, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'NY', students: '862', latitude: 43, longitude: -75, radius: 20, fillKey: 'bubbleColor'},
+                {name: 'OH', students: '8', latitude: 40.4, longitude: -82.9, radius: 4, fillKey: 'bubbleColor'},
+                {name: 'OR', students: '2', latitude: 43.8, longitude: -120.5, radius: 2, fillKey: 'bubbleColor'},
+                {name: 'PA', students: '43', latitude: 41.2, longitude: -77.2, radius: 6, fillKey: 'bubbleColor'},
+                {name: 'PR', students: '3', latitude: 18.2, longitude: -66.6, radius: 2, fillKey: 'bubbleColor'},
+                {name: 'RI', students: '17', latitude: 41.6, longitude: -71.5, radius: 5, fillKey: 'bubbleColor'},
+                {name: 'SC', students: '1', latitude: 33.8, longitude: -81.2, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'SD', students: '1', latitude: 44, longitude: -100, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'TN', students: '1', latitude: 35.5, longitude: -86.6, radius: 1, fillKey: 'bubbleColor'},
+                {name: 'TX', students: '6', latitude: 32, longitude: -100, radius: 3, fillKey: 'bubbleColor'},
+                {name: 'UT', students: '8', latitude: 39.3, longitude: -111, radius: 4, fillKey: 'bubbleColor'},
+                {name: 'VA', students: '15', latitude: 37.4, longitude: -78.7, radius: 5, fillKey: 'bubbleColor'},
+                {name: 'VT', students: '165', latitude: 44.6, longitude: -72.6, radius: 10, fillKey: 'bubbleColor'},
+                {name: 'WA', students: '12', latitude: 47.7, longitude: -120.7, radius: 5, fillKey: 'bubbleColor'},
+                {name: 'WI', students: '6', latitude: 43.8, longitude: -88.8, radius: 3, fillKey: 'bubbleColor'},
+                {name: 'WY', students: '4', latitude: 43, longitude: -107.3, radius: 2, fillKey: 'bubbleColor'},
+
+
+
+
+            ], {
+                //add students text so when you hover over bubble it shows Student(s): and then value
+                popupTemplate: function (geo, data) {
+                    return "<div class='hoverinfo'> "+ data.name +" Student(s): " + data.students + "</div>";
+                }
+            } ))
+    }
+    drawmap(700);
+
+</script>
+<script>
+    function zoomin(datamap){
+        console.log("zoom in");
+        redraw2();
+    }
+    function redraw2() {
+        datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        console.log(d3.event.translate);
+        console.log("mouse at");
+        console.log(d3.mouse(container1));
+    }
+
+    function zoomout(){
+        console.log("zoom out");
+        var myImg = document.getElementById("container1");
+        myImg.sgv.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
+    }
+</script>
+</body>
